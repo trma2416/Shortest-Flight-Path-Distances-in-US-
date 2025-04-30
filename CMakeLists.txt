@@ -11,7 +11,7 @@ endif()
 
 # Source files
 file(GLOB USER_FILES "code/*.h" "code/*.cpp")
-file(GLOB TEST_FILES RELATIVE ${CMAKE_CURRENT_SOURCE_DIR} "tests/test_*.cpp")
+file(GLOB TEST_FILES "tests/test_*.cpp")
 
 # Try to find system-installed GTest
 find_package(GTest QUIET)

@@ -300,6 +300,30 @@ code/final.cpp.s:
 	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_app.dir/build.make CMakeFiles/run_app.dir/code/final.cpp.s
 .PHONY : code/final.cpp.s
 
+tests/test_final.o: tests/test_final.cpp.o
+.PHONY : tests/test_final.o
+
+# target to build an object file
+tests/test_final.cpp.o:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/tests/test_final.cpp.o
+.PHONY : tests/test_final.cpp.o
+
+tests/test_final.i: tests/test_final.cpp.i
+.PHONY : tests/test_final.i
+
+# target to preprocess a source file
+tests/test_final.cpp.i:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/tests/test_final.cpp.i
+.PHONY : tests/test_final.cpp.i
+
+tests/test_final.s: tests/test_final.cpp.s
+.PHONY : tests/test_final.s
+
+# target to generate assembly for a file
+tests/test_final.cpp.s:
+	$(MAKE) $(MAKESILENT) -f CMakeFiles/run_tests.dir/build.make CMakeFiles/run_tests.dir/tests/test_final.cpp.s
+.PHONY : tests/test_final.cpp.s
+
 # Help Target
 help:
 	@echo "The following are some of the valid targets for this Makefile:"
@@ -325,6 +349,9 @@ help:
 	@echo "... code/final.o"
 	@echo "... code/final.i"
 	@echo "... code/final.s"
+	@echo "... tests/test_final.o"
+	@echo "... tests/test_final.i"
+	@echo "... tests/test_final.s"
 .PHONY : help
 
 

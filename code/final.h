@@ -6,7 +6,9 @@
 #include <string>
 #include <vector>
 #include <cmath>
-#include <set>
+
+//radius if earth in miles
+#define EARTH_RADIUS 3963.1f
 using namespace std;
 //Use a node to store the data we need to calculate distances
 //also need to keep track of the parent node in order to determine path

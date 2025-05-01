@@ -15,9 +15,11 @@ string Node_p::get_name(){
 void Node_p::set_d(float d){
     dist = d;
 }
+//input params need to be in degrees
 void Node_p::set_coord(float lattitude, float longi){
-    lat = lattitude;
-    longitude = longi;
+    //convert from degrees to radians
+    lat = (lattitude * 2 * M_PI) / 360.0f;
+    longitude = (longi * 2 * M_PI) / 360.0f;
 }
 void Node_p::set_parent(Node_p* p){
     parent = p;
@@ -35,6 +37,9 @@ float Node_p::get_dist(){
 Node_p* Node_p::get_parent(){
     return parent;
 }
+
+
+
 //graph member functions
 Graph:: Graph(){
 
@@ -121,7 +126,7 @@ vector<Node_p*> Graph::dijkstra(Node_p* source,Node_p* dest){
 }
 
 
-//edges initiator
+//EDGES MEMBER FUNCTIONS
 edge::edge(Node_p* n1, Node_p* n2){
     end1 = n1;
     end2 = n2;
@@ -144,18 +149,28 @@ float edge::get_wt(){
 float edge::hav(){
     Node_p* st = get_st();
     Node_p* end = get_end();
-    float delta_phi = st->get_long() - end->get_long();
-    float phi_1 = st->get_long();
-    float phi_2 = end->get_long();
-    float delta_lambda = st->get_lat() - end->get_lat();
-    float w = haversine(delta_phi) + cos(phi_1)*cos(phi_2)*haversine(delta_lambda);
+    
+    float phi_1 = st->get_lat();
+    float phi_2 = end->get_lat();
+    float delta_phi = phi_2 - phi_1;
+    float delta_lambda = end->get_long() - st->get_long();
+    float hav = haversine(delta_phi) + cos(phi_1)*cos(phi_2)*haversine(delta_lambda);
+    //now we have hav(theta) = (1 - cos(theta))/2
+    //this is the inverse haversine formula
+    float w = 2 * EARTH_RADIUS * asin(pow(hav, 0.5));
     return w;
 }
 
+
+
+
+
+//min heap functions and extra helper functions
 heapq* init(){
     heapq* queue = new(heapq);
     return queue;
 }
+//swap function for our heapq
 void swap_(heapq*& heap, int i, int j){
     Node_p* temp = heap->queue[i];
     heap->queue[i] = heap->queue[j];
@@ -235,7 +250,7 @@ Node_p* pop_(heapq*& heap){
     }
 
 }
-//hav(theta) = (1- cos(theta) / 2)
+//hav(theta) = sin^2(theta/2)
 float haversine(float theta){
-    return (1 - cos(theta)) / 2;
+    return pow(sin(theta/2), 2);
 }

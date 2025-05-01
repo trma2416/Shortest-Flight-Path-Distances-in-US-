@@ -7,7 +7,12 @@
 #include <vector>
 #include <cmath>
 
+
 //radius if earth in miles
+#define _USE_MATH_DEFINES
+#include <math.h>
+
+
 #define EARTH_RADIUS 3963.1f
 using namespace std;
 //Use a node to store the data we need to calculate distances

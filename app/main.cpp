@@ -3,10 +3,7 @@
 using namespace std;
 
 int main(){
-    cout << "enter a number ";
-    int num;
-    cin >> num;
-    cout << "your number was: " << num << endl;
+    cout << acos(2) << endl;
     return 0;
 
 }

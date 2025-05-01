@@ -24,7 +24,7 @@ private:
     float longitude;
     string name; //name of city 
     float dist;
-    Node_p* parent = nullptr; 
+    Node_p* parent; 
 public:
     Node_p(string city);
     ~Node_p();

@@ -73,13 +73,14 @@ vector<edge*> Graph::getadj(Node_p* n){
 vector<Node_p*> Graph::dijkstra(Node_p* source,Node_p* dest){
 
     //iterate through all vertices in graph and initialize the distances and parent nodes
-    for(auto& v : nodes){
-        if(v == source){
+    for(Node_p* v : nodes){
+        if(v->get_name() == source->get_name()){
             v->set_d(0);
         }
         else{
             v->set_d(INFINITY);
         }
+        v->set_parent(nullptr);
     }
     //initialize our queue
     heapq* Q = init();
@@ -95,7 +96,7 @@ vector<Node_p*> Graph::dijkstra(Node_p* source,Node_p* dest){
         }
         //get all edges from u which will give us the adjacent nodes
         vector<edge*> adj = getadj(u);
-        for(auto& e: adj){
+        for(edge* e: adj){
             //calculate the distance between each edge which will act as the weight
             float wt_updated = e->hav();
             e->set_wt(wt_updated); //update the weight 

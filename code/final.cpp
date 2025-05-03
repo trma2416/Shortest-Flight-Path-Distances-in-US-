@@ -1,4 +1,5 @@
 #include "final.h"
+
 using namespace std;
 
 
@@ -71,22 +72,23 @@ vector<edge*> Graph::getadj(Node_p* n){
     return ret; 
 }
 vector<Node_p*> Graph::dijkstra(Node_p* source,Node_p* dest){
-
+    //initialize our queue
+    heapq* Q = init();
     //iterate through all vertices in graph and initialize the distances and parent nodes
     for(Node_p* v : nodes){
         if(v->get_name() == source->get_name()){
             v->set_d(0);
+            push_(Q, v);
         }
         else{
             v->set_d(INFINITY);
         }
         v->set_parent(nullptr);
     }
-    //initialize our queue
-    heapq* Q = init();
-    push_(Q, source);
+    
+    
     //this will store our destination node 
-    Node_p* x = nullptr;
+    Node_p* x;
     while(!Q->queue.empty()){
         Node_p* u = pop_(Q); 
         //condition to break out of loop
@@ -254,4 +256,28 @@ Node_p* pop_(heapq*& heap){
 //hav(theta) = sin^2(theta/2)
 float haversine(float theta){
     return pow(sin(theta/2), 2);
+}
+//this is a helper function that will read in a txt file with all the necessary data and construct a graph data structure
+void creategraph(Graph* G){
+    ifstream file("us_state_capitals.txt");
+    string line;
+    while(getline(file, line)){
+        size_t commaPos = line.find(",");
+        size_t colonPos = line.find(":");
+        if(commaPos != string::npos && colonPos != string::npos){
+            //this will give us the capital city name
+            Node_p* node = new Node_p(line.substr(0, commaPos));
+
+            //get coordinates
+            float lat;
+            float lon;
+            string coords = line.substr(colonPos + 2);
+            stringstream ss(coords);
+            ss >> lat;
+            ss.ignore(2);
+            ss >> lon;
+            node->set_coord(lat, lon);
+            G->add_node(node);
+        }
+    }
 }

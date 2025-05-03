@@ -6,6 +6,8 @@
 #include <string>
 #include <vector>
 #include <cmath>
+#include <fstream>
+#include <sstream>
 
 
 //radius if earth in miles
@@ -110,4 +112,5 @@ Node_p* pop_(heapq*& heap);
 //this will be our shorthand hav function
 float haversine(float theta);
 
+void creategraph(Graph* G);
 #endif

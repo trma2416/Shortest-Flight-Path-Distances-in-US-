@@ -4,7 +4,7 @@ using namespace std;
 
 
 //node_p member functions
-Node_p::Node_p(string city){
+Node_p::Node_p(const string& city){
     name = city;
 }
 Node_p::~Node_p(){
@@ -32,7 +32,7 @@ float Node_p::get_long(){
     return longitude;
 }
 
-float Node_p::get_dist(){
+float Node_p::get_d(){
     return dist;
 }
 Node_p* Node_p::get_parent(){
@@ -85,10 +85,8 @@ vector<Node_p*> Graph::dijkstra(Node_p* source,Node_p* dest){
         }
         v->set_parent(nullptr);
     }
-    
-    
     //this will store our destination node 
-    Node_p* x;
+    Node_p* x = nullptr;
     while(!Q->queue.empty()){
         Node_p* u = pop_(Q); 
         //condition to break out of loop
@@ -98,15 +96,17 @@ vector<Node_p*> Graph::dijkstra(Node_p* source,Node_p* dest){
         }
         //get all edges from u which will give us the adjacent nodes
         vector<edge*> adj = getadj(u);
+        
         for(edge* e: adj){
             //calculate the distance between each edge which will act as the weight
+            
             float wt_updated = e->hav();
             e->set_wt(wt_updated); //update the weight 
             //start will always be node u
             Node_p* v = e->get_end();
             //edge relax condition
-            float dist = u->get_dist() + e->get_wt();
-            if(dist < v->get_dist()){
+            float dist = u->get_d() + e->get_wt();
+            if(dist < v->get_d()){
                 v->set_d(dist);
                 v->set_parent(u);
                 push_(Q, v);
@@ -182,13 +182,13 @@ void swap_(heapq*& heap, int i, int j){
 
 void bubble_down(heapq*& heap, int j){
     int c = 2*j + 1; //child index of elem at index j
-    float priority = (*heap->queue[j]).get_dist();
+    float priority = (*heap->queue[j]).get_d();
     while(c < heap->queue.size()){
         float min = priority;
         int min_idx = -1;
         for(int i = 0; i < 2 && i + c < heap->queue.size(); i++){
-            if((*heap->queue[i + c]).get_dist() < min){
-                min = (*heap->queue[i + c]).get_dist();
+            if((*heap->queue[i + c]).get_d() < min){
+                min = (*heap->queue[i + c]).get_d();
                 min = i + c;
             }
         }
@@ -207,7 +207,7 @@ void bubble_up(heapq*& heap, int j){
         return;
     }
     int p = (j - 1) / 2; //parent index, integer division in c++ will give us the floor
-    if((*heap->queue[j]).get_dist() < (*heap->queue[p]).get_dist()){
+    if((*heap->queue[j]).get_d() < (*heap->queue[p]).get_d()){
         swap_(heap, j, p);
         bubble_up(heap, p);
     }
@@ -222,11 +222,11 @@ void heapify(heapq*& heap, int i, int n){
     int l = 2*i + 1; //left child
     int r = 2*i + 2; //right child
     //if left child is smaller than parent
-    if(l < n && (*heap->queue[l]).get_dist() < (*heap->queue[smallest]).get_dist()){
+    if(l < n && (*heap->queue[l]).get_d() < (*heap->queue[smallest]).get_d()){
         smallest = l;
     }
     //if right child is smaller than parent
-    if(r < n && (*heap->queue[r]).get_dist() < (*heap->queue[smallest]).get_dist()){
+    if(r < n && (*heap->queue[r]).get_d() < (*heap->queue[smallest]).get_d()){
         smallest = r;
     }
     //if child node's distance is less than parents
@@ -276,6 +276,7 @@ void creategraph(Graph* G){
             ss >> lat;
             ss.ignore(2);
             ss >> lon;
+            cout << lat << " " << lon << endl;
             node->set_coord(lat, lon);
             G->add_node(node);
         }

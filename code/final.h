@@ -28,16 +28,16 @@ private:
     float dist;
     Node_p* parent; 
 public:
-    Node_p(string city);
+    Node_p(const string& city);
     ~Node_p();
     string get_name();
-    void set_data(string s);
+    
     void set_d(float d);
     void set_coord(float lattitude, float longi);
     void set_parent(Node_p* p);
     float get_lat();
     float get_long();
-    float get_dist();
+    float get_d();
     Node_p* get_parent();
 };
 //Dijkstra's algorithm requires a priority queue to work efficiently

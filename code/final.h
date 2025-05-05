@@ -8,7 +8,8 @@
 #include <cmath>
 #include <fstream>
 #include <sstream>
-
+#include <unordered_set>
+#include <unordered_map>
 
 
 #define _USE_MATH_DEFINES
@@ -73,13 +74,15 @@ public:
     vector<edge*> get_edges();
     void add_node(Node_p* n);
     void add_edge(edge* e);
-    vector<edge*> getadj(Node_p* n);
+    Node_p* get_node_by_name(const string& name);
+    unordered_set<edge*> getadj(Node_p* n);
     //this will implement our search algorithm which we will use to find the shortest flight path based
     //on DISTANCE determined by using haversine function
     vector<Node_p*> dijkstra(string source, string dest);
 private:
     vector<Node_p*> nodes;
     vector<edge*> edges;
+    unordered_map<string, Node_p*> node_map;
 
     
 };

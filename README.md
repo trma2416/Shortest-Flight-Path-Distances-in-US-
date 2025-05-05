@@ -1,8 +1,7 @@
-This project is my final project for Data Structures. In this project I will find the shortest flight paths based on distance from between US capital cities (airports).
-The overall Data Structure for this project will be a fully-connected, undirected Graph. The Graph's vertices will store data such as the city's name, its latitudinal and longitudinal coordinates, 
-its distance in the graph from the source node, and the parent node. The Graph's edges will store data such as the nodes at each end, and its weight. 
+This is my final project for Data Structures. In this project I will find the shortest flight paths based on distance from between any US capital cities.
+The overall Data Structure for this project will be a fully-connected, undirected Graph. The Graph's vertices will store data such as the city's name, its latitudinal and longitudinal coordinates, its distance in the graph from the source node, and the parent node. The Graph's edges will store data such as the nodes at each end, and its weight. 
 
-In order to determine the shortest flight paths, I will use an adaptation of Dijkstra's algorithm which dynamically calculates the weight between nodes accoring to the haversine formula. 
-The haversine formula is given by, ![equation](https://latex.codecogs.com/svg.image?\dpi{110}\mathrm{hav}(\theta)=\mathrm{hav}(\Delta\phi)+\cos(\phi_{1})\cos(\phi_{2})\mathrm{hav}(\Delta\lambda))
+In order to determine the shortest flight paths, I will use an adaptation of Dijkstra's algorithm. The weights of each edge will be dynamically generated while reading in a txt file with the city data and their coordinates. In order to determine the weight, I will first use the haversine formula given by, ![equation](https://latex.codecogs.com/svg.image?\dpi{110}\mathrm{hav}(\theta)=\mathrm{hav}(\Delta\phi)+\cos(\phi_{1})\cos(\phi_{2})\mathrm{hav}(\Delta\lambda)) and then to determine the distance in miles, I will use the inverse haversinge formula given by: 
+![equation](https://latex.codecogs.com/svg.image?\dpi{110}d=2r\mathrm{arcsin}(\sqrt{\mathrm{hav}(\theta)})), where r is going to be the average earth radius in miles: 3963.1. The algorithm works by finding all possible paths from the source node to the destination node, and returns the shortest path. This is done by updating the nodes distances from the starting node at each iteration, based on the condition that if a new path is less than the previous distance to that node, then it updates that nodes distance to include the new path distance. 
 
 

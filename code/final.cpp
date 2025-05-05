@@ -46,7 +46,16 @@ Graph:: Graph(){
 
 }
 Graph:: ~Graph(){
+    for(auto e: edges){
+        delete e;
+    }
+    edges.clear();
+    for(auto n: nodes){
+        delete n;
+    }
+    nodes.clear();
 
+    node_map.clear();
 }
 vector<Node_p*> Graph::get_nodes(){
  return nodes;   
@@ -56,56 +65,82 @@ vector<edge*> Graph::get_edges(){
 }
 void Graph::add_node(Node_p* n){
     nodes.push_back(n);
+    node_map[n->get_name()] = n;
 }
 void Graph::add_edge(edge* e){
     edges.push_back(e);
+    
 }
-vector<edge*> Graph::getadj(Node_p* n){
-    vector<edge*> ret;
-    for(vector<edge*>::iterator i = edges.begin(); i != edges.end(); i++){
-        edge* e = *i;
-        if(e->get_st() == n || e->get_end() == n){
-            ret.push_back(e);
+//this function using a hash table (map) to store the actual node pointer object rather than refering to a node by name
+Node_p* Graph::get_node_by_name(const string& name){
+    if(node_map.find(name) != node_map.end()){
+        return node_map[name];
+    }
+    //if we dont find name in our map
+    return nullptr;
+}
+unordered_set<edge*> Graph::getadj(Node_p* n){
+    unordered_set<edge*> ret;
+    string name = n->get_name();
+    for(auto e: edges){
+    
+        if(e->get_st()->get_name() == name || e->get_end()->get_name() == name){
+            if(ret.count(e))continue;
+            ret.insert(e);
         }
         
     }
     return ret; 
 }
 vector<Node_p*> Graph::dijkstra(string source,string dest){
+    //get actual node pointer objects for source and destination
+    Node_p* src = get_node_by_name(source);
+    Node_p* dst = get_node_by_name(dest);
+
+    if(!src || !dst){
+        cout << "Source or Destination not found in graph" << endl;
+        return {};
+    }
     //initialize our queue
     heapq* Q = init();
     //iterate through all vertices in graph and initialize the distances and parent nodes
     for(auto& v: nodes){
-        
-        if(v->get_name() == source){
-            v->set_d(0);
-            push_(Q, v);
-        }
-        else{
-            v->set_d(INFINITY);
-        }
+        v->set_d(INFINITY);
         v->set_parent(nullptr);
     }
+    
+    src->set_d(0);
+    push_(Q, src);
     //this will store our destination node 
     Node_p* x = nullptr;
+
+
     while(!Q->queue.empty()){
         Node_p* u = pop_(Q); 
         
         //condition to break out of loop
-        if(u->get_name() == dest){
+        if(u == dst){
             x = u;
             break;
         }
-        if(u==nullptr) break;
+        if(u==nullptr){
+            cout << "seg fault";
+            break;
+        }
+
+        
+        
         //get all edges from u which will give us the adjacent nodes
-        vector<edge*> adj = getadj(u);
+        unordered_set<edge*> adj = getadj(u);
         
         for(auto& e: adj){
             
 
             //start will always be node u
-            Node_p* v = e->get_end();
+            Node_p* v = (e->get_st() == u) ? e->get_end() : e->get_st();
+
             if(v == nullptr) continue;
+            //cout << v->get_name() << ",";
 
             //edge relax 
             float dist = u->get_d() + e->get_wt();
@@ -115,6 +150,10 @@ vector<Node_p*> Graph::dijkstra(string source,string dest){
                 push_(Q, v);
             }
         }
+    }
+    //debug line
+    if (x == nullptr) {
+        cout << "Destination node not found in Dijkstra." << endl;
     }
     //we will popuate this vector with the nodes that are on the shortest path
     vector<Node_p*> path;

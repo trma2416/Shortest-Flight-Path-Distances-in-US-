@@ -10,11 +10,11 @@
 #include <sstream>
 
 
-//radius if earth in miles
+
 #define _USE_MATH_DEFINES
 #include <math.h>
 
-
+//radius of earth in miles
 #define EARTH_RADIUS 3963.1f
 using namespace std;
 //Use a node to store the data we need to calculate distances
@@ -61,7 +61,7 @@ class edge{
         //set_wt will use the haversine function to determine the weight of the edge
         void set_wt(float w); 
         float get_wt();
-        float hav();
+        float inverse_hav();
     };
     
 class Graph{
@@ -76,7 +76,7 @@ public:
     vector<edge*> getadj(Node_p* n);
     //this will implement our search algorithm which we will use to find the shortest flight path based
     //on DISTANCE determined by using haversine function
-    vector<Node_p*> dijkstra(Node_p* source, Node_p* dest);
+    vector<Node_p*> dijkstra(string source, string dest);
 private:
     vector<Node_p*> nodes;
     vector<edge*> edges;
@@ -90,10 +90,6 @@ heapq* init();
 
 //useful helperfunction which swaps elemets at index i and j in place
 void swap_(heapq*& heap, int i, int j);
-
-//this will bubble down an element in the min-heap at postion j to restore the
-//heap property of its children must be less than or equal to the parent node
-void bubble_down(heapq*& heap, int j);
 
 //helper for insert as we will insert the node at the end of heap and bubble it up into the correct position
 void bubble_up(heapq*& heap, int pos);
@@ -112,5 +108,7 @@ Node_p* pop_(heapq*& heap);
 //this will be our shorthand hav function
 float haversine(float theta);
 
-void creategraph(Graph* G);
+void creategraph(Graph* G, string filename);
+
+void create_edges(Graph* G);
 #endif

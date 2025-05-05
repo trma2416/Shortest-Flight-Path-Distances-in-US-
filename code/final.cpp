@@ -71,12 +71,13 @@ vector<edge*> Graph::getadj(Node_p* n){
     }
     return ret; 
 }
-vector<Node_p*> Graph::dijkstra(Node_p* source,Node_p* dest){
+vector<Node_p*> Graph::dijkstra(string source,string dest){
     //initialize our queue
     heapq* Q = init();
     //iterate through all vertices in graph and initialize the distances and parent nodes
-    for(Node_p* v : nodes){
-        if(v->get_name() == source->get_name()){
+    for(auto& v: nodes){
+        
+        if(v->get_name() == source){
             v->set_d(0);
             push_(Q, v);
         }
@@ -89,22 +90,24 @@ vector<Node_p*> Graph::dijkstra(Node_p* source,Node_p* dest){
     Node_p* x = nullptr;
     while(!Q->queue.empty()){
         Node_p* u = pop_(Q); 
+        
         //condition to break out of loop
-        if(u->get_name() == dest->get_name()){
+        if(u->get_name() == dest){
             x = u;
             break;
         }
+        if(u==nullptr) break;
         //get all edges from u which will give us the adjacent nodes
         vector<edge*> adj = getadj(u);
         
-        for(edge* e: adj){
-            //calculate the distance between each edge which will act as the weight
+        for(auto& e: adj){
             
-            float wt_updated = e->hav();
-            e->set_wt(wt_updated); //update the weight 
+
             //start will always be node u
             Node_p* v = e->get_end();
-            //edge relax condition
+            if(v == nullptr) continue;
+
+            //edge relax 
             float dist = u->get_d() + e->get_wt();
             if(dist < v->get_d()){
                 v->set_d(dist);
@@ -115,10 +118,9 @@ vector<Node_p*> Graph::dijkstra(Node_p* source,Node_p* dest){
     }
     //we will popuate this vector with the nodes that are on the shortest path
     vector<Node_p*> path;
-    if(x->get_parent() != nullptr || x->get_name() == dest->get_name()){
-        //iterate backwards starting from destination node and 
-        //add the parent to the beginning of the path vector
-        while(x != nullptr){
+    if(x!= nullptr && (x->get_parent() != nullptr || x->get_name() == dest)){
+        //iterate backwards starting from destination node and add the parent to the beginning of the path vector
+        while(x){
             path.insert(path.begin(), x);
             x = x->get_parent();
     }
@@ -149,7 +151,8 @@ void edge::set_wt(float w){
 float edge::get_wt(){
     return wt;
 }
-float edge::hav(){
+//this will calculate our distances between nodes using the inverse haversine d = 2rarsin(sqrt(hav theta))
+float edge::inverse_hav(){
     Node_p* st = get_st();
     Node_p* end = get_end();
     
@@ -157,8 +160,10 @@ float edge::hav(){
     float phi_2 = end->get_lat();
     float delta_phi = phi_2 - phi_1;
     float delta_lambda = end->get_long() - st->get_long();
+
+    //compute the angle using the haversine formula
     float hav = haversine(delta_phi) + cos(phi_1)*cos(phi_2)*haversine(delta_lambda);
-    //now we have hav(theta) = (1 - cos(theta))/2
+    
     //this is the inverse haversine formula
     float w = 2 * EARTH_RADIUS * asin(pow(hav, 0.5));
     return w;
@@ -180,28 +185,7 @@ void swap_(heapq*& heap, int i, int j){
     heap->queue[j] = temp;
 }
 
-void bubble_down(heapq*& heap, int j){
-    int c = 2*j + 1; //child index of elem at index j
-    float priority = (*heap->queue[j]).get_d();
-    while(c < heap->queue.size()){
-        float min = priority;
-        int min_idx = -1;
-        for(int i = 0; i < 2 && i + c < heap->queue.size(); i++){
-            if((*heap->queue[i + c]).get_d() < min){
-                min = (*heap->queue[i + c]).get_d();
-                min = i + c;
-            }
-        }
-        if(min == priority){
-            return;
-        }
-        else{
-            swap_(heap, j, min_idx);
-            j = min;
-            c = 2*j + 1;
-        }
-    }
-}
+
 void bubble_up(heapq*& heap, int j){
     if(j == 0){
         return;
@@ -258,10 +242,11 @@ float haversine(float theta){
     return pow(sin(theta/2), 2);
 }
 //this is a helper function that will read in a txt file with all the necessary data and construct a graph data structure
-void creategraph(Graph* G){
-    ifstream file("us_state_capitals.txt");
+void creategraph(Graph* G, string filename){
+    ifstream file(filename);
     string line;
     while(getline(file, line)){
+        
         size_t commaPos = line.find(",");
         size_t colonPos = line.find(":");
         if(commaPos != string::npos && colonPos != string::npos){
@@ -276,9 +261,19 @@ void creategraph(Graph* G){
             ss >> lat;
             ss.ignore(2);
             ss >> lon;
-            cout << lat << " " << lon << endl;
             node->set_coord(lat, lon);
             G->add_node(node);
+        }
+    }
+}
+void create_edges(Graph* G){
+    vector<Node_p*> nodes = G->get_nodes();
+    for(int i = 0; i < nodes.size(); i++){
+        for(int j = i + 1; j < nodes.size(); j++){
+            edge* e = new edge(nodes[i], nodes[j]);
+            float new_wt = e->inverse_hav();
+            e->set_wt(new_wt);
+            G->add_edge(e);
         }
     }
 }

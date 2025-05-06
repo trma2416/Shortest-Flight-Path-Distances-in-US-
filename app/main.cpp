@@ -17,7 +17,7 @@ int main(){
     while(start != "Q"){
 
         cout << "Please Enter a Starting City, or enter Q to quit (must be a US state capital)" << endl;
-        cout <<"\n";
+        
         cin>>start;
         if(start == "Q"){
             break;
@@ -37,10 +37,15 @@ int main(){
         }
         if(fin_in_graph){
             cout << "Valid Destination" << endl;
-            cout << "\n";
+            
             vector<Node_p*> path = G->dijkstra(start, finish);
             
             cout << "Distance traveled " << path[1]->get_d() << endl;
+            cout << "Places visited along way ";
+            for(auto i: path){
+                cout << i->get_name() << ", ";
+            }
+            cout << endl;
         }
 
         

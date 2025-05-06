@@ -305,11 +305,13 @@ void creategraph(Graph* G, string filename){
         }
     }
 }
+//create a fully connected graph which will have (n(n-1)/2) edges
 void create_edges(Graph* G){
     vector<Node_p*> nodes = G->get_nodes();
     for(int i = 0; i < nodes.size(); i++){
         for(int j = i + 1; j < nodes.size(); j++){
             edge* e = new edge(nodes[i], nodes[j]);
+            //were also gonna calculate the distances and add the weights to the edges so we dont have to in dijkstras 
             float new_wt = e->inverse_hav();
             e->set_wt(new_wt);
             G->add_edge(e);

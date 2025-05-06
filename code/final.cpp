@@ -298,6 +298,7 @@ void creategraph(Graph* G, string filename){
             string coords = line.substr(colonPos + 2);
             stringstream ss(coords);
             ss >> lat;
+            //ignore the comma
             ss.ignore(2);
             ss >> lon;
             node->set_coord(lat, lon);
